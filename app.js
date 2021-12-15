@@ -36,12 +36,16 @@ class App {
   run() {
     const server = http.createServer(this.server)
     const io = new Server(server)
+    
     io.on('connection', (socket) => {
-        console.log( 'connected')
+        socket.emit('message', 'Welcome to the chat Room')
+        socket.on('message', (msg) => {
+          io.emit('message', msg)
+        })
     })
     server.listen(this.port, () => {
         console.log(`App Running on http://localhost:${server.address().port}`);
-      })
+    })
   
   }
 }
