@@ -39,14 +39,24 @@ class App {
     
     io.on('connection', (socket) => {
         socket.emit('message', 'Welcome to the chat Room')
+        socket.broadcast.emit('newUser', 'new User has joined the chat  room')
         socket.on('message', (msg) => {
           io.emit('message', msg)
         })
-    })
+      socket.on("share-location", (location, callback) => {
+        io.emit(
+          "share-location",
+          `https://www.google.com/maps?q=${location.latitude},${location.longitude}`
+        );
+        callback('location shared');
+      });
+      socket.on("disconnect", () => {
+        io.emit("userDisconnected", "A User Left the chat room");
+      });
+    });
     server.listen(this.port, () => {
-        console.log(`App Running on http://localhost:${server.address().port}`);
-    })
-  
+      console.log(`App Running on http://localhost:${server.address().port}`);
+    });
   }
 }
 
